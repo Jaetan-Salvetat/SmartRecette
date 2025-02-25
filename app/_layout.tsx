@@ -1,39 +1,79 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { useColorScheme, View } from 'react-native'
+import { MD3DarkTheme, MD3LightTheme, PaperProvider, ThemeProvider, adaptNavigationTheme } from "react-native-paper"
+import { createStaticNavigation, DarkTheme as NavigationDarkTheme, DefaultTheme as NavigationDefaultTheme, NavigationIndependentTree } from "@react-navigation/native"
+import merge from "deepmerge"
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { Colors } from "../constants/Colors"
+import { AppTheme, AppThemeContext } from '@/contexts/ThemeContext'
+import { useState, useContext } from 'react'
+import HomePage from './home'
+import LoginPage from './authentication/login'
+import RegisterPage from './authentication/register'
+import useAuthStore from '@/stores/authStore'
+import ForgotPasswordPage from './authentication/forgot-password'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+const customDarkTheme = { ...MD3DarkTheme, colors: Colors.dark }
+const customLightTheme = { ...MD3LightTheme, colors: Colors.light }
+
+const { LightTheme, DarkTheme } = adaptNavigationTheme({
+  reactNavigationLight: NavigationDefaultTheme,
+  reactNavigationDark: NavigationDarkTheme,
+});
+
+const CombinedLightTheme = merge(LightTheme, customLightTheme)
+const CombinedDarkTheme = merge(DarkTheme, customDarkTheme)
+
+const loggedOutScreens = {
+  register: RegisterPage,
+  login: LoginPage,
+  forgotPassword: ForgotPasswordPage
+}
+
+const loggedInScreens = {
+  home: HomePage
+}
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+  const colorScheme = useColorScheme()
+  const [theme, setTheme] = useState<AppTheme>('light')
+  const isDarkTheme = theme === 'dark'
+  const paperTheme = isDarkTheme ? CombinedDarkTheme : CombinedLightTheme
+  const { user } = useAuthStore()
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+  const RootStack = createNativeStackNavigator({
+    groups: {
+      loggedIn: {
+        if: () => user != null,
+        screens: loggedInScreens,
+        screenOptions: {
+          headerShown: false,
+          statusBarStyle: 'dark',
+          statusBarColor: 'transparent',
+          navigationBarColor: '#ffffff'
+        }
+      },
+      loggedOut: {
+        if: () => user == null,
+        screens: loggedOutScreens,
+        screenOptions: {
+          headerShown: false,
+          statusBarStyle: 'dark',
+          statusBarColor: 'transparent',
+          navigationBarColor: '#ffffff'
+        }
+      }
     }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
+  })
+  const Navigation = createStaticNavigation(RootStack)
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  );
+    <AppThemeContext.Provider value={{theme, setTheme}}>
+      <PaperProvider theme={paperTheme}>
+        <NavigationIndependentTree>
+          <Navigation theme={paperTheme} />
+        </NavigationIndependentTree>
+      </PaperProvider>
+    </AppThemeContext.Provider>
+  )
 }
