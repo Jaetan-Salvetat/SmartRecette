@@ -3,6 +3,7 @@ import { TextInput, Button, Text, HelperText, IconButton } from "react-native-pa
 import { useContext, useState } from "react"
 import { useNavigation } from "@react-navigation/native"
 import useAuthStore from "@/stores/authStore"
+import { EMAIL_REGEX } from "@/constants/validations"
 
 export default function RegisterPage() {
 	const navigation = useNavigation()
@@ -29,7 +30,7 @@ export default function RegisterPage() {
 
 		if (!formData.email) {
 			newErrors.email = "L'email est requis"
-		} else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+		} else if (!EMAIL_REGEX.test(formData.email)) {
 			newErrors.email = "L'email n'est pas valide"
 		}
 
