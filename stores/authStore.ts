@@ -1,108 +1,66 @@
 import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import PocketBase, { RecordModel } from 'pocketbase'
+import { persist } from 'zustand/middleware'
 
-const pb = new PocketBase('https://smart-recette.jaetan.fr')
-
-export interface AuthUser extends RecordModel {
-    id: string
-    email: string
-}
+import { client, account } from '@/stores/appwrite'
+import User from "@/models/User"
+import { AppwriteException, ID } from 'react-native-appwrite'
 
 interface AuthStore {
-    user: AuthUser | null
+    user: User | null
     isLoading: boolean
     error: string | null
 
-    setUser: (user: AuthUser | null) => void
-    setLoading: (isLoading: boolean) => void
+    setLoading: () => void
     setError: (error: string | null) => void
     loadAuth: () => Promise<void>
-    register: (email: string, password: string, confirmPassword: string) => Promise<void>
+    register: (email: string, password: string, username: string) => Promise<void>
     login: (email: string, password: string) => Promise<void>
     logout: () => Promise<void>
 }
 
-const useAuthStore = create<AuthStore>()(
-    persist(
-        (set) => ({
-            user: null,
-            isLoading: true,
-            error: null,
+const useAuthStore = create<AuthStore>((set, get) => ({
+    user: null,
+    isLoading: false,
+    error: null,
 
-            setUser: (user) => set({ user }),
-            setLoading: (isLoading) => set({ isLoading }),
-            setError: (error) => set({ error }),
+    setLoading: () => set({ isLoading: !get().isLoading }),
+    setError: (error: string | null) => set({ error }),
+    loadAuth: async () => {
+        set({ isLoading: true, error: null })
 
-            loadAuth: async () => {
-                set({ isLoading: true, error: null })
-                try {
-                    if (pb.authStore.isValid) {
-                        const authData = await pb.collection('users').authRefresh()
-                        set({ user: authData.record as AuthUser })
-                    } else {
-                        set({ user: null })
-                    }
-                } catch (error) {
-                    console.error("Initialization error:", error)
-                    set({ user: null })
-                } finally {
-                    set({ isLoading: false })
-                }
-            },
-
-            register: async (email, password, confirmPassword) => {
-                set({ isLoading: true, error: null })
-                try {
-                    await pb.collection('users').create({ 
-                        email, 
-                        password, 
-                        passwordConfirm: confirmPassword 
-                    })
-                    const authData = await pb.collection('users').authWithPassword(email, password)
-                    set({ user: authData.record as AuthUser })
-                } catch (error) {
-                    console.error("Regiter error:", error)
-                    throw error
-                } finally {
-                    set({ isLoading: false })
-                }
-            },
-
-            login: async (email, password) => {
-                set({ isLoading: true, error: null })
-                try {
-                    const authData = await pb.collection('users').authWithPassword(email, password)
-                    set({ user: authData.record as AuthUser })
-                } catch (error) {
-                    console.error("Login error:", error)
-                    throw error
-                } finally {
-                    set({ isLoading: false })
-                }
-            },
-
-            logout: async () => {
-                set({ isLoading: true, error: null })
-                try {
-                    pb.authStore.clear()
-                    set({ user: null })
-                } catch (error) {
-                    console.error("Logout error:", error)
-                } finally {
-                    set({ isLoading: false })
-                }
-            }
-        }),
-        {
-            name: 'auth-storage',
-            storage: createJSONStorage(() => AsyncStorage),
-            partialize: (state) => ({ user: state.user }),
+        try {
+            const user = await account.get()
+            set({ user, isLoading: false })
+        } catch (error) {
+            set({ isLoading: false })
         }
-    )
-)
+    },
+    register: async (email: string, password: string, username: string) => {
+        try {
+            set({ isLoading: true, error: null })
 
-useAuthStore.getState().loadAuth()
+            const user = await account.create(ID.unique(), email, password, username)
+            get().loadAuth()
+        } catch (error) {
+            console.error(error)
+            set({ isLoading: false })
+        }
+    },
+    login: async (email: string, password: string) => {
+        try {
+            set({ isLoading: true, error: null })
+
+            const user = await account.createEmailPasswordSession(email, password)
+            get().loadAuth()
+        } catch (error) {
+            console.error(error)
+            set({ error: error as string, isLoading: false })
+        }
+    },
+    logout: async () => {
+        await account.deleteSession("current")
+        set({ user: null, isLoading: false, error: null })
+    },
+}))
 
 export default useAuthStore

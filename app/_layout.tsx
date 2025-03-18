@@ -1,11 +1,11 @@
 import { useColorScheme, View } from 'react-native'
-import { MD3DarkTheme, MD3LightTheme, PaperProvider, ThemeProvider, adaptNavigationTheme } from "react-native-paper"
+import { MD3DarkTheme, MD3LightTheme, PaperProvider, ProgressBar, ThemeProvider, adaptNavigationTheme } from "react-native-paper"
 import { createStaticNavigation, DarkTheme as NavigationDarkTheme, DefaultTheme as NavigationDefaultTheme, NavigationIndependentTree } from "@react-navigation/native"
 import merge from "deepmerge"
 
 import { Colors } from "../constants/Colors"
 import { AppTheme, AppThemeContext } from '@/contexts/ThemeContext'
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import HomePage from './home'
 import LoginPage from './authentication/login'
 import RegisterPage from './authentication/register'
@@ -25,8 +25,8 @@ const CombinedLightTheme = merge(LightTheme, customLightTheme)
 const CombinedDarkTheme = merge(DarkTheme, customDarkTheme)
 
 const loggedOutScreens = {
-  register: RegisterPage,
   login: LoginPage,
+  register: RegisterPage,
   forgotPassword: ForgotPasswordPage
 }
 
@@ -39,12 +39,16 @@ export default function RootLayout() {
   const [theme, setTheme] = useState<AppTheme>('light')
   const isDarkTheme = theme === 'dark'
   const paperTheme = isDarkTheme ? CombinedDarkTheme : CombinedLightTheme
-  const { user } = useAuthStore()
+  const { user, loadAuth } = useAuthStore()
+
+  useEffect(() => {
+    loadAuth()
+  }, [])
 
   const RootStack = createNativeStackNavigator({
     groups: {
       loggedIn: {
-        if: () => user != null,
+        if: () => user !== null,
         screens: loggedInScreens,
         screenOptions: {
           headerShown: false,
@@ -54,7 +58,7 @@ export default function RootLayout() {
         }
       },
       loggedOut: {
-        if: () => user == null,
+        if: () => user === null,
         screens: loggedOutScreens,
         screenOptions: {
           headerShown: false,

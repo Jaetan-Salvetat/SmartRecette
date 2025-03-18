@@ -4,28 +4,31 @@ import { useContext, useState } from "react"
 import { useNavigation } from "@react-navigation/native"
 import useAuthStore from "@/stores/authStore"
 import { EMAIL_REGEX } from "@/constants/validations"
+import PasswordInput from "@/components/PasswordInput"
 
 export default function RegisterPage() {
 	const navigation = useNavigation()
-	const { register } = useAuthStore()
-	const [loading, setLoading] = useState(false)
+	const { register, isLoading, error } = useAuthStore()
 	const [formData, setFormData] = useState({
 		username: "",
 		email: "",
 		password: "",
-		confirmPassword: ""
 	})
 	const [errors, setErrors] = useState({
+		username: "",
 		email: "",
 		password: "",
-		confirmPassword: ""
 	})
 
 	const validateForm = () => {
 		const newErrors = {
+			username: "",
 			email: "",
 			password: "",
-			confirmPassword: ""
+		}
+
+		if (!formData.username) {
+			newErrors.username = "Le nom d'utilisateur est requis"
 		}
 
 		if (!formData.email) {
@@ -40,27 +43,13 @@ export default function RegisterPage() {
 			newErrors.password = "Le mot de passe doit contenir au moins 6 caractères"
 		}
 
-		if (formData.password !== formData.confirmPassword) {
-			newErrors.confirmPassword = "Les mots de passe ne correspondent pas"
-		}
-
 		setErrors(newErrors)
 		return !Object.values(newErrors).some(error => error !== "")
 	}
 
 	const handleRegister = async () => {
 		if (!validateForm()) return
-
-		setLoading(true)
-		try {
-			await register(formData.email, formData.password, formData.confirmPassword)
-			// La navigation sera automatiquement gérée par le changement d'état d'authentification
-		} catch (error) {
-			console.error(error)
-			// Gérer l'erreur ici
-		} finally {
-			setLoading(false)
-		}
+		await register(formData.email, formData.password, formData.username)
 	}
 
 	return (
@@ -72,6 +61,24 @@ export default function RegisterPage() {
 				</Text>
 			</View>
 
+			{error && (
+				<HelperText type="error" visible={true}>
+					{error}
+				</HelperText>
+			)}
+
+			<TextInput
+				label="Nom d'utilisateur"
+				value={formData.username}
+        		mode="outlined"
+				onChangeText={(text) => setFormData({ ...formData, username: text })}
+					error={!!errors.username}
+					style={styles.input}
+				/>
+				<HelperText type="error" visible={!!errors.username}>
+					{errors.username}
+				</HelperText>
+
 				<TextInput
 					label="Email"
 					value={formData.email}
@@ -80,40 +87,25 @@ export default function RegisterPage() {
 					keyboardType="email-address"
 					autoCapitalize="none"
 					style={styles.input}
+					mode="outlined"
 				/>
 				<HelperText type="error" visible={!!errors.email}>
 					{errors.email}
 				</HelperText>
 
-				<TextInput
-					label="Mot de passe"
+				<PasswordInput
 					value={formData.password}
 					onChangeText={(text) => setFormData({ ...formData, password: text })}
-					error={!!errors.password}
-					secureTextEntry
+					error={errors.password}
 					style={styles.input}
 				/>
-				<HelperText type="error" visible={!!errors.password}>
-					{errors.password}
-				</HelperText>
-
-				<TextInput
-					label="Confirmer le mot de passe"
-					value={formData.confirmPassword}
-					onChangeText={(text) => setFormData({ ...formData, confirmPassword: text })}
-					error={!!errors.confirmPassword}
-					secureTextEntry
-					style={styles.input}
-				/>
-				<HelperText type="error" visible={!!errors.confirmPassword}>
-					{errors.confirmPassword}
-				</HelperText>
 
 				<Button
 					mode="contained"
 					onPress={handleRegister}
-					loading={loading}
+					loading={isLoading}
 					style={styles.button}
+					disabled={isLoading}
 				>
 					S'inscrire
 				</Button>

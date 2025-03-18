@@ -4,11 +4,11 @@ import { useState } from "react"
 import { useNavigation } from "@react-navigation/native"
 import useAuthStore from "@/stores/authStore"
 import { EMAIL_REGEX } from "@/constants/validations"
+import PasswordInput from "@/components/PasswordInput"
 
 export default function LoginPage() {
     const navigation = useNavigation()
-    const { login } = useAuthStore()
-    const [loading, setLoading] = useState(false)
+    const { login, isLoading } = useAuthStore()
     const [formData, setFormData] = useState({
         email: "",
         password: ""
@@ -41,7 +41,6 @@ export default function LoginPage() {
     const handleLogin = async () => {
         if (!validateForm()) return
 
-        setLoading(true)
         try {
             await login(formData.email, formData.password)
         } catch (error) {
@@ -50,8 +49,6 @@ export default function LoginPage() {
                 ...errors,
                 password: "Email ou mot de passe incorrect"
             })
-        } finally {
-            setLoading(false)
         }
     }
 
@@ -72,28 +69,24 @@ export default function LoginPage() {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 style={styles.input}
+                mode="outlined"
             />
             <HelperText type="error" visible={!!errors.email}>
                 {errors.email}
             </HelperText>
 
-            <TextInput
-                label="Mot de passe"
+            <PasswordInput
                 value={formData.password}
                 onChangeText={(text) => setFormData({ ...formData, password: text })}
-                error={!!errors.password}
-                secureTextEntry
+                error={errors.password}
                 style={styles.input}
             />
-            <HelperText type="error" visible={!!errors.password}>
-                {errors.password}
-            </HelperText>
 
             <Button
                 mode="contained"
                 onPress={handleLogin}
-                loading={loading}
-                disabled={loading}
+                loading={isLoading}
+                disabled={isLoading}
                 style={styles.button}
             >
                 Se connecter
@@ -101,7 +94,7 @@ export default function LoginPage() {
 
             <Button
                 mode="text"
-                onPress={() => navigation.navigate('Register' as never)}
+                onPress={() => navigation.navigate('register' as never)}
                 style={styles.linkButton}
             >
                 Pas encore de compte ? S'inscrire
