@@ -61,11 +61,9 @@ export default function RegisterPage() {
 				</Text>
 			</View>
 
-			{error && (
-				<HelperText type="error" visible={true}>
-					{error}
-				</HelperText>
-			)}
+			<HelperText type="error" visible={!!error}>
+				{error}
+			</HelperText>
 
 			<TextInput
 				label="Nom d'utilisateur"
@@ -122,8 +120,9 @@ export default function RegisterPage() {
 
 const styles = StyleSheet.create({
 	container: {
-		flexGrow: 1,
-		padding: 20,
+        flexGrow: 1,
+        padding: 20,
+        justifyContent: "center"
 	},
 	header: {
 		alignItems: 'center',

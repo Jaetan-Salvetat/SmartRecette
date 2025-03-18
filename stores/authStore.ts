@@ -2,7 +2,7 @@ import { create } from 'zustand'
 
 import { account } from '@/stores/appwrite'
 import User from "@/models/User"
-import { ID } from 'react-native-appwrite'
+import { AppwriteException, ID } from 'react-native-appwrite'
 
 interface AuthStore {
     user: User | null
@@ -42,7 +42,7 @@ const useAuthStore = create<AuthStore>((set, get) => ({
             get().loadAuth()
         } catch (error) {
             console.error(error)
-            set({ isLoading: false })
+            set({ error: getErrorMessage(error), isLoading: false })
         }
     },
     login: async (email: string, password: string) => {
@@ -53,7 +53,7 @@ const useAuthStore = create<AuthStore>((set, get) => ({
             get().loadAuth()
         } catch (error) {
             console.error(error)
-            set({ error: error as string, isLoading: false })
+            set({ error: getErrorMessage(error), isLoading: false })
         }
     },
     logout: async () => {
@@ -61,5 +61,12 @@ const useAuthStore = create<AuthStore>((set, get) => ({
         set({ user: null, isLoading: false, error: null })
     },
 }))
+
+function getErrorMessage(error: unknown): string {
+    if (error instanceof AppwriteException) {
+        return error.message
+    }
+    return "Une erreur est survenue"
+}
 
 export default useAuthStore

@@ -8,7 +8,7 @@ import PasswordInput from "@/components/PasswordInput"
 
 export default function LoginPage() {
     const navigation = useNavigation()
-    const { login, isLoading } = useAuthStore()
+    const { login, isLoading, error } = useAuthStore()
     const [formData, setFormData] = useState({
         email: "",
         password: ""
@@ -60,6 +60,10 @@ export default function LoginPage() {
                     Connectez-vous pour accéder à vos recettes
                 </Text>
             </View>
+
+            <HelperText type="error" visible={!!error}>
+                {error}
+            </HelperText>
 
             <TextInput
                 label="Email"
