@@ -75,7 +75,7 @@ export default function RootLayout() {
     <AppThemeContext.Provider value={{theme, setTheme}}>
       <PaperProvider theme={paperTheme}>
         <NavigationIndependentTree>
-          <Navigation theme={paperTheme} />
+          <Navigation theme={paperTheme as Theme} />
         </NavigationIndependentTree>
       </PaperProvider>
     </AppThemeContext.Provider>
