@@ -1,9 +1,8 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
 
-import { client, account } from '@/stores/appwrite'
+import { account } from '@/stores/appwrite'
 import User from "@/models/User"
-import { AppwriteException, ID } from 'react-native-appwrite'
+import { ID } from 'react-native-appwrite'
 
 interface AuthStore {
     user: User | null
