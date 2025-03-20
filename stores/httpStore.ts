@@ -43,7 +43,6 @@ const useHttpStore = create<HttpStore>((set) => ({
                 description: recipe.description,
                 prepTime: recipe.prepTime,
                 servings: recipe.servings,
-                isPublic: recipe.isPublic,
                 imageUrl: recipe.imageUrl,
                 user: recipe.user,
                 ingredients: recipe.ingredients.map((ing: Ingredient) => ({

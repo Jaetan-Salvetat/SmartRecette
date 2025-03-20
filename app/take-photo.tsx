@@ -60,11 +60,11 @@ export default function TakePhotoPage() {
         setCurrentPhotoType('front')
     }
 
-    const saveRecipe = async () => {
+    const saveRecipe = async (recipe: Recipe) => {
         setIsLoading(true)
         try {
-            console.log('Sauvegarde des photos:', frontPhoto, backPhoto)
-            let recipe = await getRecipeFromImage(frontPhoto!, backPhoto!)
+            // console.log('Sauvegarde des photos:', frontPhoto, backPhoto)
+            // let recipe = await getRecipeFromImage(frontPhoto!, backPhoto!)
             recipe.user = user!.$id
             await addRecipe(recipe)
             navigation.goBack()
@@ -79,9 +79,8 @@ export default function TakePhotoPage() {
         setIsLoading(true)
         try {
             const newRecipe = await getRecipeFromImage(frontPhoto!, backPhoto!)
+            console.log("newRecipe", newRecipe)
             setRecipe(newRecipe)
-            console.log("newRecipe", newRecipe);
-            
             sheetRef.current?.expand()
         } catch (error) {
             setIsError(true)
@@ -124,11 +123,6 @@ export default function TakePhotoPage() {
                             currentPhotoType={currentPhotoType}
                             setIsCameraReady={setIsCameraReady}
                             cameraRef={cameraRef}
-                            setIsLoading={setIsLoading}
-                            takePicture={takePicture}
-                            resetPhotos={resetPhotos}
-                            saveRecipe={saveRecipe}
-                            isLoading={isLoading}
                         />
                         <CameraBottomBar
                             frontPhoto={frontPhoto}

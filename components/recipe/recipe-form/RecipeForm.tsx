@@ -31,7 +31,7 @@ export default function RecipeForm({ recipe, handleOnSave, isLoading = false }: 
     })
 
     useEffect(() => {
-        console.log("recipe", recipe);
+        console.log("recipe from form", recipe);
         
         if (recipe) {
             setTitle(recipe.title || "")
@@ -116,9 +116,8 @@ export default function RecipeForm({ recipe, handleOnSave, isLoading = false }: 
             $id: recipe?.$id || ID.unique(),
             title: title.trim(),
             description: description.trim(),
-            prepTime: Number(prepTime),
+            prepTime: Number(prepTime || 0),
             servings: Number(2),
-            isPublic: recipe?.isPublic ?? true,
             imageUrl: recipe?.imageUrl || null,
             user: user!.$id,
             ingredients: filteredIngredients,
@@ -129,7 +128,7 @@ export default function RecipeForm({ recipe, handleOnSave, isLoading = false }: 
         handleOnSave(recipeToSave)
     }
 
-    return (
+    return <>
         <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
             <RecipeGeneralInfoForm
                 title={title}
@@ -173,7 +172,7 @@ export default function RecipeForm({ recipe, handleOnSave, isLoading = false }: 
                 Enregistrer la recette
             </Button>
         </ScrollView>
-    );
+    </>
 }
 
 const styles = StyleSheet.create({

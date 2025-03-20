@@ -3,7 +3,6 @@ interface Recipe {
     title: string
     description: string
     prepTime: number
-    isPublic: boolean
     imageUrl: string | null
     servings: number
     user: string

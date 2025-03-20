@@ -1,3 +1,4 @@
+import { Recipe } from "@/models/Recipe"
 import { CameraView } from "expo-camera"
 import { View, StyleSheet } from "react-native"
 import { Text } from "react-native-paper"
@@ -8,23 +9,13 @@ interface CameraContainerProps {
     currentPhotoType: PhotoType
     setIsCameraReady: (isReady: boolean) => void
     cameraRef: React.RefObject<CameraView>
-    setIsLoading: (isLoading: boolean) => void
-    takePicture: () => Promise<void>
-    resetPhotos: () => void
-    saveRecipe: () => Promise<void>
-    isLoading: boolean
 }
 
 
 export default function CameraContainer({
     currentPhotoType,
     setIsCameraReady,
-    cameraRef,
-    setIsLoading,
-    takePicture,
-    resetPhotos,
-    saveRecipe,
-    isLoading
+    cameraRef
 }: CameraContainerProps) {
     return <>
         <CameraView
