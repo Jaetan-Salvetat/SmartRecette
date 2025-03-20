@@ -1,32 +1,14 @@
-import { Recipe } from "@/models/Recipe";
-import { View, StyleSheet } from "react-native";
-import { Card, Chip, IconButton, Text } from "react-native-paper";
+import { Recipe } from "@/models/Recipe"
+import { View, StyleSheet } from "react-native"
+import { Card, Chip, IconButton, Text } from "react-native-paper"
+
+const placeholderUri = "https://d2tbovyd0ghy3r.cloudfront.net/illustrations/empty-product-img.png?&format=webp&width=1584&quality=80"
 
 export default function HomeRecipeCard({ item }: { item: Recipe }) {
     return <>
         <Card style={styles.card} mode="elevated">
-            {item.imageUrl ? (
-                <Card.Cover source={{ uri: item.imageUrl }} />
-            ) : (
-                <View style={styles.placeholderImage}>
-                <IconButton icon="food" size={40} />
-                </View>
-            )}
-            <Card.Title
-                title={item.title}
-                right={() =>
-                item.isPublic ? (
-                    <Chip
-                    icon="share"
-                    compact
-                    style={styles.publicChip}
-                    textStyle={{ color: "white" }}
-                    >
-                    Public
-                    </Chip>
-                ) : null
-                }
-            />
+            <Card.Cover source={{ uri: item.imageUrl || placeholderUri }} />
+            <Card.Title title={item.title} />
             <Card.Content>
                 <View style={styles.recipeInfo}>
                 <Text variant="bodyMedium">{item.prepTime} min</Text>
@@ -41,12 +23,6 @@ const styles = StyleSheet.create({
       flex: 1,
       margin: 8,
       maxWidth: "47%",
-    },
-    placeholderImage: {
-      height: 120,
-      backgroundColor: "#e0e0e0",
-      justifyContent: "center",
-      alignItems: "center",
     },
     recipeInfo: {
       flexDirection: "row",
