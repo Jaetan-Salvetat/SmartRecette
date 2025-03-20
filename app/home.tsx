@@ -66,8 +66,7 @@ const navigation = useNavigation()
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5"
+    flex: 1
   },
   loadingContainer: {
     flex: 1,

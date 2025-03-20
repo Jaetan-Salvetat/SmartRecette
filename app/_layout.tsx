@@ -54,7 +54,8 @@ export default function RootLayout() {
         screens: loggedInScreens,
         screenOptions: {
           headerShown: false,
-          statusBarStyle: 'dark'
+          statusBarStyle: 'dark',
+          navigationBarColor: 'transparent'
         }
       },
       loggedOut: {
@@ -62,7 +63,8 @@ export default function RootLayout() {
         screens: loggedOutScreens,
         screenOptions: {
           headerShown: false,
-          statusBarStyle: 'dark'
+          statusBarStyle: 'dark',
+          navigationBarColor: 'transparent'
         }
       }
     }
