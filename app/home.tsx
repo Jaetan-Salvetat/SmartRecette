@@ -15,7 +15,7 @@ import useAuthStore from "@/stores/authStore"
 export default function HomePage() {
 const navigation = useNavigation()
   const insets = useSafeAreaInsets()
-  const { recipes, isLoading, loadRecipes } = useRecipeStore()
+  const { recipes, isLoading, loadRecipes, deleteRecipe } = useRecipeStore()
   const { user } = useAuthStore()
   const [searchQuery, setSearchQuery] = useState("")
   const [isFabOpen, setIsFabOpen] = useState(false)
@@ -48,7 +48,7 @@ const navigation = useNavigation()
       ) : recipes.length === 0 ? (
         <HomeEmptyState navigation={navigation} />
       ) : (
-        <HomeRecipesList filteredRecipes={filteredRecipes} searchQuery={searchQuery} />
+        <HomeRecipesList filteredRecipes={filteredRecipes} searchQuery={searchQuery} onDeleteRecipe={deleteRecipe} />
       )}
 
       <HomeFabs
