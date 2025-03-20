@@ -10,7 +10,7 @@ import CameraPreviewData from '@/components/recipe/camera/CameraPreviewData'
 import CameraBottomBar from '@/components/recipe/camera/CameraBottomBar'
 import LoadingDialog from '@/components/LoadingDialog'
 import CameraContainer, { PhotoType } from '@/components/recipe/camera/CameraContainer'
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet'
+import BottomSheet, { BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import RecipeForm from '@/components/recipe/recipe-form/RecipeForm'
 import { Recipe } from '@/models/Recipe'
@@ -144,13 +144,13 @@ export default function TakePhotoPage() {
                 <LoadingDialog isLoading={isLoading} text={dialogText} />
 
                 <BottomSheet ref={sheetRef} enablePanDownToClose={true} snapPoints={sheetSnapPoints} index={-1}>
-                    <BottomSheetView style={styles.container}>
+                    <BottomSheetScrollView style={styles.container}>
                         <RecipeForm
                             recipe={recipe}
                             handleOnSave={saveRecipe}
                             isLoading={isLoading}
                         />
-                    </BottomSheetView>
+                    </BottomSheetScrollView>
                 </BottomSheet>
             </View>
         </GestureHandlerRootView>

@@ -34,12 +34,12 @@ export default function RecipeForm({ recipe, handleOnSave, isLoading = false }: 
         console.log("recipe", recipe);
         
         if (recipe) {
-            setTitle(recipe.title)
-            setDescription(recipe.description)
-            setPrepTime(recipe.prepTime.toString())
-            setIngredients(recipe.ingredients)
-            setInstructions(recipe.instructions)
-            setTags(recipe.tags)
+            setTitle(recipe.title || "")
+            setDescription(recipe.description || "")
+            setPrepTime(recipe.prepTime?.toString() || "")
+            setIngredients(recipe.ingredients || [])
+            setInstructions(recipe.instructions || [])
+            setTags(recipe.tags || [])
         }
     }, [recipe])
 
