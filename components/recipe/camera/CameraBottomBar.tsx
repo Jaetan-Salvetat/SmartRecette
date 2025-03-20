@@ -1,14 +1,18 @@
 import { TouchableOpacity, View, Image, ActivityIndicator, StyleSheet } from "react-native"
 import { Text } from "react-native-paper"
+import { PhotoType } from "./CameraContainer"
+import CameraGetLocalImage from "./CameraGetLocalImage"
 
 interface CameraBottomBarProps {
     frontPhoto: string | null
     takePicture: () => void
     isCameraReady: boolean
     isLoading: boolean
+    currentPhotoType: PhotoType
+    onImageSelected: (uri: string) => void
 }
 
-export default function CameraBottomBar({ frontPhoto, takePicture, isCameraReady, isLoading }: CameraBottomBarProps) {
+export default function CameraBottomBar({ frontPhoto, takePicture, isCameraReady, isLoading,currentPhotoType, onImageSelected }: CameraBottomBarProps) {
   return <>
     <View style={styles.footer}>
         {frontPhoto && (
@@ -32,7 +36,11 @@ export default function CameraBottomBar({ frontPhoto, takePicture, isCameraReady
             )}
         </TouchableOpacity>
         
-        <View style={styles.thumbnailContainer} />
+        <CameraGetLocalImage
+            onImageSelected={onImageSelected}
+            currentPhotoType={currentPhotoType}
+            isLoading={isLoading}
+        />
     </View>
   </>
 }

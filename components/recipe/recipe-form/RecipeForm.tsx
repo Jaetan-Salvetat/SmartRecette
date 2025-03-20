@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { StyleSheet, ScrollView } from "react-native"
 import { Button } from "react-native-paper"
 import { ID } from "react-native-appwrite"
@@ -10,29 +10,38 @@ import TagsForm from "@/components/recipe/recipe-form/TagsForm"
 import useAuthStore from "@/stores/authStore"
 
 interface RecipeFormProps {
-    recipe?: Recipe
+    recipe?: Recipe | null
     handleOnSave: (recipe: Recipe) => void
     isLoading?: boolean
 }
 
 export default function RecipeForm({ recipe, handleOnSave, isLoading = false }: RecipeFormProps) {
     const { user } = useAuthStore()
-    const [title, setTitle] = useState(recipe?.title || "")
-    const [description, setDescription] = useState(recipe?.description || "")
-    const [prepTime, setPrepTime] = useState(recipe?.prepTime?.toString() || "")
-    const [instructions, setInstructions] = useState<string[]>(
-        recipe?.instructions?.length ? recipe.instructions : []
-    )
-    const [ingredients, setIngredients] = useState<Ingredient[]>(
-        recipe?.ingredients?.length ? recipe.ingredients : []
-    )
-    const [tags, setTags] = useState<string[]>(recipe?.tags || [])
+    const [title, setTitle] = useState("")
+    const [description, setDescription] = useState("")
+    const [prepTime, setPrepTime] = useState("")
+    const [instructions, setInstructions] = useState<string[]>([])
+    const [ingredients, setIngredients] = useState<Ingredient[]>([])
+    const [tags, setTags] = useState<string[]>([])
     const [newTagName, setNewTagName] = useState("");
     const [tagDialogVisible, setTagDialogVisible] = useState(false)
     const [errors, setErrors] = useState({
         title: false,
         prepTime: false,
     })
+
+    useEffect(() => {
+        console.log("recipe", recipe);
+        
+        if (recipe) {
+            setTitle(recipe.title)
+            setDescription(recipe.description)
+            setPrepTime(recipe.prepTime.toString())
+            setIngredients(recipe.ingredients)
+            setInstructions(recipe.instructions)
+            setTags(recipe.tags)
+        }
+    }, [recipe])
 
     const validateForm = () => {
         const newErrors = {
@@ -160,8 +169,6 @@ export default function RecipeForm({ recipe, handleOnSave, isLoading = false }: 
                 mode="contained"
                 onPress={handleSubmit}
                 style={styles.submitButton}
-                loading={isLoading}
-                disabled={isLoading}
             >
                 {recipe ? "Mettre à jour la recette" : "Enregistrer la recette"}
             </Button>

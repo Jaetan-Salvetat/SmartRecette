@@ -35,6 +35,7 @@ const useHttpStore = create<HttpStore>((set) => ({
             })
             const data = await response.json()
             const recipe = data.recipe_content
+            console.log("recipe", recipe);
             
             return {
                 $id: null,
@@ -56,7 +57,7 @@ const useHttpStore = create<HttpStore>((set) => ({
             }
         } catch (error) {
             console.error(error)
-            throw Error("Failed to get recipe from image: " + error)
+            throw error
         } finally {
             set({ isLoading: false })
         }

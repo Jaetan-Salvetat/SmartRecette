@@ -19,7 +19,7 @@ export default function IngredientsForm({
         <Text variant="headlineSmall" style={styles.sectionTitle}>Ingrédients</Text>
             
             {ingredients.map((ingredient, index) => (
-                <View key={ingredient.$id} style={styles.ingredientRow}>
+                <View key={ingredient.name} style={styles.ingredientRow}>
                     <TextInput
                         label="Nom"
                         value={ingredient.name}
@@ -29,7 +29,7 @@ export default function IngredientsForm({
                     />
                     <TextInput
                         label="Quantité"
-                        value={ingredient.quantity.toString()}
+                        value={ingredient.quantity?.toString() || ""}
                         onChangeText={(value) => handleIngredientChange(index, 'quantity', value)}
                         mode="outlined"
                         keyboardType="numeric"
@@ -37,7 +37,7 @@ export default function IngredientsForm({
                     />
                     <TextInput
                         label="Unité"
-                        value={ingredient.unit}
+                        value={ingredient.unit || ""}
                         onChangeText={(value) => handleIngredientChange(index, 'unit', value)}
                         mode="outlined"
                         style={styles.ingredientUnit}

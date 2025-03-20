@@ -12,7 +12,7 @@ interface RecipeStore {
     isLoading: boolean
 
     loadRecipes: (userId: string) => Promise<void>
-    addRecipe: (recipe: Recipe) => Promise<void>
+    addRecipe: (recipe: Recipe) => Promise<Recipe>
     updateRecipe: (recipe: Recipe) => Promise<void>
     deleteRecipe: (recipe: Recipe) => Promise<void>
 }
@@ -32,13 +32,15 @@ const useRecipeStore = create<RecipeStore>((set, get) => ({
     addRecipe: async (recipe: Recipe) => {
         set({ isLoading: true })
         try {
-            await database.createDocument(
+            const newRecipe = await database.createDocument(
                 databaseId,
                 recipeId,
                 ID.unique(),
                 {...recipe, $id: null}
             )
+            
             await get().loadRecipes(recipe.user)
+            return documentToRecipe(newRecipe)
         } catch (error) {
             console.error(error)
             set({ isLoading: false })
@@ -81,6 +83,22 @@ function documentsToRecipes(documents: Models.Document[]): Recipe[] {
         imageUrl: document.imageUrl,
         user: document.user
     }))
+}
+
+function documentToRecipe(document: Models.Document): Recipe {
+    return {
+        $id: document.$id,
+        title: document.title,
+        description: document.description,
+        prepTime: document.prepTime,
+        servings: document.servings,
+        isPublic: document.isPublic,
+        ingredients: document.ingredients,
+        instructions: document.instructions,
+        tags: document.tags,
+        imageUrl: document.imageUrl,
+        user: document.user
+    }
 }
 
 export default useRecipeStore
