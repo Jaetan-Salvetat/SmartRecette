@@ -170,7 +170,7 @@ export default function RecipeForm({ recipe, handleOnSave, isLoading = false }: 
                 onPress={handleSubmit}
                 style={styles.submitButton}
             >
-                {recipe ? "Mettre à jour la recette" : "Enregistrer la recette"}
+                {recipe ? "Enregistrer la recette"}
             </Button>
         </ScrollView>
     );
