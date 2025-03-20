@@ -1,5 +1,5 @@
 import useAuthStore from "@/stores/authStore"
-import { useNavigation } from "expo-router/build/useNavigation"
+import { useNavigation } from "expo-router"
 import { Button } from "react-native-paper"
 import { StyleSheet } from "react-native"
 

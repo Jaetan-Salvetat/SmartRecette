@@ -1,6 +1,5 @@
 import { ScrollView, StyleSheet } from "react-native"
 import { useState } from "react"
-import { useNavigation } from "@react-navigation/native"
 import useAuthStore from "@/stores/authStore"
 import { EMAIL_REGEX } from "@/constants/validations"
 import LoginHeader from "@/components/login/LoginHeader"

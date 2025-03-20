@@ -1,27 +1,22 @@
-import { Models } from "react-native-appwrite"
-
 interface Recipe {
-    $id: string
+    $id: string | null
     title: string
     description: string
     prepTime: number
     isPublic: boolean
-    imageUrl: string
+    imageUrl: string | null
+    servings: number
+    user: string
     ingredients: Ingredient[]
     instructions: string[]
-    tags: Tag[]
+    tags: string[]
 }
 
 interface Ingredient {
-    $id: string
+    $id: string | null
     name: string
-    quantity: number
-    unit: string
+    quantity: number | null
+    unit: string | null
 }
 
-interface Tag {
-    $id: string
-    name: string
-}
-
-export { Recipe, Ingredient, Tag }
+export { Recipe, Ingredient }

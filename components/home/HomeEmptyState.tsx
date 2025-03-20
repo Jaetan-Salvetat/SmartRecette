@@ -1,14 +1,16 @@
 import { ScrollView, StyleSheet } from "react-native"
 import { IconButton, Text, Button } from "react-native-paper"
+import { NavigationProp, NavigationState } from "@react-navigation/native"
 
 interface HomeEmptyStateProps {
-    handlePhotoCapture: () => void
+  navigation: Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
+    getState(): NavigationState | undefined;
+  }
 }
 
-export default function HomeEmptyState({ handlePhotoCapture }: HomeEmptyStateProps) {
+export default function HomeEmptyState({ navigation }: HomeEmptyStateProps) {
     return <>
         <ScrollView contentContainerStyle={styles.emptyContainer}>
-            <IconButton icon="notebook" size={60} />
             <IconButton icon="notebook" size={60} />
             <Text variant="headlineMedium" style={styles.emptyTitle}>
                 Aucune recette
@@ -19,7 +21,7 @@ export default function HomeEmptyState({ handlePhotoCapture }: HomeEmptyStatePro
             <Button
                 mode="contained"
                 icon="camera"
-                onPress={handlePhotoCapture}
+                onPress={() => navigation.navigate("takePhoto" as never)}
                 style={styles.emptyButton}
             >
                 Ajouter ma première recette

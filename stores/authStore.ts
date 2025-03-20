@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-import { account } from '@/stores/appwrite'
+import { account, getErrorMessage } from '@/stores/appwrite'
 import User from "@/models/User"
 import { AppwriteException, ID } from 'react-native-appwrite'
 
@@ -59,14 +59,7 @@ const useAuthStore = create<AuthStore>((set, get) => ({
     logout: async () => {
         await account.deleteSession("current")
         set({ user: null, isLoading: false, error: null })
-    },
-}))
-
-function getErrorMessage(error: unknown): string {
-    if (error instanceof AppwriteException) {
-        return error.message
     }
-    return "Une erreur est survenue"
-}
+}))
 
 export default useAuthStore

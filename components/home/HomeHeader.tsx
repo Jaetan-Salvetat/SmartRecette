@@ -12,7 +12,7 @@ export default function HomeHeader({ setLogoutDialogVisible, setSearchQuery, sea
         <Appbar.Header>
             <Appbar.Content title="Mes Recettes" />
             <Appbar.Action
-            icon="account"
+            icon="logout"
             onPress={() => setLogoutDialogVisible(true)}
             />
         </Appbar.Header>

@@ -1,6 +1,5 @@
-import { useColorScheme, View } from 'react-native'
 import { MD3DarkTheme, MD3LightTheme, PaperProvider, ProgressBar, ThemeProvider, adaptNavigationTheme } from "react-native-paper"
-import { createStaticNavigation, DarkTheme as NavigationDarkTheme, DefaultTheme as NavigationDefaultTheme, NavigationIndependentTree } from "@react-navigation/native"
+import { createStaticNavigation, DarkTheme as NavigationDarkTheme, DefaultTheme as NavigationDefaultTheme, NavigationIndependentTree, Theme } from "@react-navigation/native"
 import merge from "deepmerge"
 
 import { Colors } from "../constants/Colors"
@@ -12,6 +11,8 @@ import RegisterPage from './authentication/register'
 import useAuthStore from '@/stores/authStore'
 import ForgotPasswordPage from './authentication/forgot-password'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import CreateManuallyPage from './create-manually'
+import TakePhotoPage from "./take-photo"
 
 const customDarkTheme = { ...MD3DarkTheme, colors: Colors.dark }
 const customLightTheme = { ...MD3LightTheme, colors: Colors.light }
@@ -31,11 +32,12 @@ const loggedOutScreens = {
 }
 
 const loggedInScreens = {
-  home: HomePage
+  home: HomePage,
+  createManually: CreateManuallyPage,
+  takePhoto: TakePhotoPage
 }
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme()
   const [theme, setTheme] = useState<AppTheme>('light')
   const isDarkTheme = theme === 'dark'
   const paperTheme = isDarkTheme ? CombinedDarkTheme : CombinedLightTheme
@@ -52,9 +54,7 @@ export default function RootLayout() {
         screens: loggedInScreens,
         screenOptions: {
           headerShown: false,
-          statusBarStyle: 'dark',
-          statusBarColor: 'transparent',
-          navigationBarColor: '#ffffff'
+          statusBarStyle: 'dark'
         }
       },
       loggedOut: {
@@ -62,9 +62,7 @@ export default function RootLayout() {
         screens: loggedOutScreens,
         screenOptions: {
           headerShown: false,
-          statusBarStyle: 'dark',
-          statusBarColor: 'transparent',
-          navigationBarColor: '#ffffff'
+          statusBarStyle: 'dark'
         }
       }
     }
